@@ -1,0 +1,109 @@
+
+<section class="container-fluid">
+
+    <p class="font-weight-bold pl-3">PRODUCTS</p>
+  
+    <!-- FILTER TO SEARCH BY PRODUCT NAME OR SUBSTRING -->
+    <div class="container-fluid">
+      <form class="form-inline" method="post" action="/products/search">
+        <div class="form-group mb-3 pr-2">
+          <label for="productName" class="sr-only">Search by name:</label>
+          <input type="text" class="form-control" id="productName" name="productName" placeholder="Product">
+        </div>
+        <button type="submit" class="btn btn-primary mb-3">Filter</button>
+      </form>
+    </div>
+  
+    <hr>
+  
+    <!-- LIST OF PRODUCTS OF A CATEGORY -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          
+          <div class="card">
+            <img class="card-img-top" src="http://lorempixel.com/400/200/food" alt="Product name">
+            <div class="card-body">
+              <h5 class="card-title">Patterns for Stained Glass Boxes</h5>
+              <p class="card-text">
+                <span class="badge badge-light">C$ 14.95</span><br>
+                <span class="badge badge-danger">not available</span>
+              </p>
+              <a href="#" class="btn btn-primary">Details</a>
+            </div>
+          </div>
+
+        </div>
+        <div class="col">
+
+          <!--
+            name, 
+            msrp or salePrice
+            stock
+            thumbnailImage
+            customerRating (se nao tiver mostra "no rated")
+            customerRatingImage
+          -->
+
+          <div class="card">
+            <img class="card-img-top" src="http://lorempixel.com/400/200/sports" alt="Product name">
+            <div class="card-body">
+              <h5 class="card-title">Patterns for Stained Glass Boxes</h5>
+              <p class="card-text">
+                <span class="badge badge-light">C$ 14.95</span><br>
+                <span class="badge badge-warning">Limited supply</span>
+              </p>
+              <a href="#" class="btn btn-primary">Details</a>
+            </div>
+          </div>
+
+        </div>
+        <div class="col">
+
+          <div class="card">
+            <img class="card-img-top" src="http://lorempixel.com/400/200/city" alt="Product name">
+            <div class="card-body">
+              <h5 class="card-title">Patterns for Stained Glass Boxes</h5>
+              <p class="card-text">
+                <span class="badge badge-light">C$ 14.95</span><br>
+                <span class="badge badge-success">Available</span>
+              </p>
+              <!-- <a href="#" class="btn btn-primary">Details</a> -->
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                Details
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <div class="col">
+          coluna 4
+        </div>
+        <div class="col">
+          coluna 5
+        </div>
+      </div>
+    </div>
+  
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Patterns for Stained Glass Boxes</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            All product information comes here
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>

@@ -1,0 +1,83 @@
+
+<section class="container-fluid">
+
+  <p class="font-weight-bold pl-3">CATEGORIES</p>
+
+  <!-- FILTER TO SEARCH BY CATEGORY NAME OR SUBSTRING -->
+  <div class="container-fluid">
+    <form class="form-inline" method="get" action="/categories">
+      <div class="form-group mb-3 pr-2">
+        <label for="categoryName" class="sr-only">Search by name:</label>
+        <input type="text" class="form-control" id="categoryName" name="categoryName" placeholder="Category">
+      </div>
+      <button type="submit" class="btn btn-primary mb-3">Filter</button>
+    </form>
+  </div>
+
+  <hr>
+
+  <!-- IF WE RETRIEVE SOME CATEGORIES FROM WALMART OPEN API,
+  WE SHOW IT, BETWEEN 5 COLUMNS, WHERE THE BADGE SHOULD SHOW
+  THE TOTAL OF PRODUCTS IN THIS CATEGORY
+  PS: TOTAL = CATEGORIES.LENGTH (SENDED BY BACKEND)
+  -->
+  <% if (categories) {
+    var maxCols = 5;
+    var maxRows = parseInt(total / maxCols) + 1;
+    var ini = 0;
+    var end = maxRows;
+    %>
+      <% if (total > maxCols) { %>
+        <div class="container-fluid">
+          <div class="row">
+            <% for (var i = 0; i < maxCols; i++) { %>
+            <div class="col">
+              <ul class="list-group">
+                <%
+                if (end > total) {
+                  end = total;
+                }
+                %>
+                <% for (var j = ini; j < end; j++) { %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <font class="small"><%=categories[j].name%></font>
+                    <!-- <span class="badge badge-primary badge-pill">0</span> -->
+                  </li>
+                <% }
+                ini = end;
+                end += maxRows;
+                %>
+              </ul>
+            </div>
+            <% } 
+            %>
+          </div>
+        </div>
+      <% } else if (total > 0 && total <= maxCols) { %>
+        <div class="container-fluid">
+          <div class="row">
+            <% for (var i = 0; i < total; i++) { %>
+            <div class="col">
+              <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <font class="small"><%=categories[i].name%></font>
+                  <!-- <span class="badge badge-primary badge-pill">0</span> -->
+                </li>
+              </ul>
+            </div>
+            <% } %>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
+        </div>
+      <% } else { %>
+        <!-- IF WE COULDN'T FIND ANY CATEGORY WE SHOW A WARNING MESSAGE -->
+        <%- include('_cat_none') %>
+      <% } %>
+  <% } else { %>
+    <!-- IF WE COULDN'T FIND ANY CATEGORY WE SHOW A WARNING MESSAGE -->
+    <%- include('_cat_none') %>
+  <% } %>
+
+</section>
