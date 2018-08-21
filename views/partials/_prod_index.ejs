@@ -2,21 +2,132 @@
 <section class="container-fluid">
 
     <p class="font-weight-bold pl-3">PRODUCTS</p>
+
+    <%
+    if (pagination) {
+      %>
+      totalPages: <%=pagination.totalPages%>,
+      maxId: <%=pagination.maxId%>,
+      nextPage: <%=pagination.nextPage%>,
+      category: <%=pagination.category%>.
+      <%
+    }
+    %>
   
-    <!-- FILTER TO SEARCH BY PRODUCT NAME OR SUBSTRING -->
+    <!-- Filter to search for a product name or substring -->
     <div class="container-fluid">
-      <form class="form-inline" method="post" action="/products/search">
+      <form class="form-inline" method="post" action="/products">
         <div class="form-group mb-3 pr-2">
           <label for="productName" class="sr-only">Search by name:</label>
           <input type="text" class="form-control" id="productName" name="productName" placeholder="Product">
         </div>
-        <button type="submit" class="btn btn-primary mb-3">Filter</button>
+        <button type="submit" class="btn btn-primary mb-3">Search</button>
       </form>
     </div>
   
     <hr>
   
-    <!-- LIST OF PRODUCTS OF A CATEGORY -->
+  <!-- 
+    List of Products, where:
+    maxCols => Number of columns that our list have
+    maxRows => Number of products in each column
+    ini => Start element of our list of products
+    end => Last element in our list for each column
+    total => products.length (backend send that)
+    products => array of products objects (all properties of Walmart Open API product item)
+   -->
+  <% if (products) {
+    var maxCols = 5;
+    var maxRows = parseInt(total / maxCols);
+    var ini = 0;
+    var end = maxRows;
+    %>
+      <!-- In this scenario, to avoid slow loading of the page, we force a limit of
+      25 results in each page and as we work with default 5 columns (maxCols) we
+      display 5 products in each col. To look for the next 25 products, if this happens,
+      the user needs to use the pagination in the right of the FILTER area -->
+      <% if (total > maxCols) { %>
+        <div class="container-fluid">
+          <div class="row">
+            <% for (var i = 0; i < maxCols; i++) { %>
+            <div class="col">
+                <%
+                if (end > total) {
+                  end = total;
+                }
+                %>
+                <% for (var j = ini; j < end; j++) { %>
+                  <a href="#" data-toggle="modal" data-target="#exampleModalCenter<%=j%>">
+                    <div class="card mb-3">
+                      <img class="card-img-top pt-2" src="<%=products[j].thumbnailImage%>">
+                      <div class="card-body border-info">
+                        <p class="card-text">
+                          <%=products[j].name.substring(0,15)%>...<br>
+                          <span class="badge badge-pill badge-success"><%=products[j].stock%></span><br>
+                          <span class="badge badge-pill badge-info">C$ <%=products[j].salePrice%></span><br>
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+                  <!-- product detail modal window -->
+                  <%- include('_prod_modal', { pos:j, myProduct:products[j] }) %>
+                <% }
+                ini = end;
+                end += maxRows;
+                %>
+            </div>
+            <% } 
+            %>
+          </div>
+        </div>
+      <% } else if (total > 0 && total <= maxCols) { %>
+        <div class="container-fluid">
+          <div class="row">
+            <% for (var j = 0; j < total; j++) { %>
+            <div class="col">
+              <a href="#" data-toggle="modal" data-target="#exampleModalCenter<%=j%>">
+                <div class="card mb-3">
+                  <img class="card-img-top pt-2" src="<%=products[j].thumbnailImage%>">
+                  <div class="card-body border-info">
+                    <p class="card-text">
+                      <%=products[j].name.substring(0,15)%>...<br>
+                      <span class="badge badge-pill badge-success"><%=products[j].stock%></span><br>
+                      <span class="badge badge-pill badge-info">C$ <%=products[j].salePrice%></span><br>
+                    </p>
+                  </div>
+                </div>
+              </a>
+              <!-- product detail modal window -->
+              <%- include('_prod_modal', { pos:j, myProduct:products[j] }) %>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      <% } else { %>
+        <!-- if not product was found (filter returns no products) -->
+        <%- include('_no_result') %>
+      <% } %>
+  <% } else { %>
+    <!-- if not product was found (products is empty in the backend) -->
+    <%- include('_no_result') %>
+  <% } %>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- LIST OF PRODUCTS OF A CATEGORY
     <div class="container-fluid">
       <div class="row">
         <div class="col">
@@ -36,7 +147,6 @@
         </div>
         <div class="col">
 
-          <!--
             name, 
             msrp or salePrice
             stock
@@ -45,7 +155,7 @@
             customerRatingImage
           -->
 
-          <div class="card">
+          <!-- <div class="card">
             <img class="card-img-top" src="http://lorempixel.com/400/200/sports" alt="Product name">
             <div class="card-body">
               <h5 class="card-title">Patterns for Stained Glass Boxes</h5>
@@ -58,18 +168,18 @@
           </div>
 
         </div>
-        <div class="col">
+        <div class="col"> -->
 
-          <div class="card">
+          <!-- <div class="card">
             <img class="card-img-top" src="http://lorempixel.com/400/200/city" alt="Product name">
             <div class="card-body">
               <h5 class="card-title">Patterns for Stained Glass Boxes</h5>
               <p class="card-text">
                 <span class="badge badge-light">C$ 14.95</span><br>
                 <span class="badge badge-success">Available</span>
-              </p>
+              </p> -->
               <!-- <a href="#" class="btn btn-primary">Details</a> -->
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+              <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
                 Details
               </button>
             </div>
@@ -83,11 +193,11 @@
           coluna 5
         </div>
       </div>
-    </div>
+    </div> -->
   
 
     <!-- PRODUCT DETAIL MODAL -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <!-- <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -104,6 +214,6 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
-  </section>
+  <!-- </section> -->
