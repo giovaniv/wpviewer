@@ -38,6 +38,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // const lists_helpers = require("./lib/lists_helpers.js")(knex);
 // const maps_helpers = require("./lib/maps_helpers.js")(knex);
 const categories_helpers = require("./lib/categories_helpers.js");
+const products_helpers = require("./lib/products_helpers.js");
 
 // ROUTES
 // const apiRoutes = require('./routes/apis')(api_helpers);
@@ -49,6 +50,7 @@ const categories_helpers = require("./lib/categories_helpers.js");
 // const listsRoutes = require('./routes/lists')(lists_helpers);
 // const MapsRoutes = require('./routes/maps')(maps_helpers);
 const categoriesRoutes = require('./routes/categories')(categories_helpers);
+const productsRoutes = require('./routes/products')(products_helpers);
 
 // MOUNTS
 // app.use('/apis', apiRoutes)
@@ -60,12 +62,13 @@ const categoriesRoutes = require('./routes/categories')(categories_helpers);
 // app.use('/lists', listsRoutes);
 // app.use('/maps', MapsRoutes);
 app.use('/categories', categoriesRoutes);
+app.use('/products', productsRoutes);
 
 app.use(express.static(__dirname + '/public'));
 
 app.get("/", (req, res) => { res.render("index") });
 //app.get("/categories", (req, res) => { res.render("categories") });
-app.get("/products", (req, res) => { res.render("products") });
+// app.get("/products", (req, res) => { res.render("products") });
 app.get("/features", (req, res) => { res.render("features") });
 app.get("/about", (req, res) => { res.render("about") });
 

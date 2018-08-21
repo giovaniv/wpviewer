@@ -22,3 +22,18 @@ footer {
   bottom: 0;
   height: 100px;
 }
+
+a:focus, a:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.card {
+  -webkit-transition: opacity .6s;
+  transition: opacity .6s;
+}
+
+.card:hover {
+  filter: alpha(opacity=60);
+  opacity: .6;
+}
