@@ -1,7 +1,8 @@
 
 <section class="container-fluid">
 
-    <p class="font-weight-bold pl-3">PRODUCTS</p>
+    <p class="font-weight-bold pl-3">PRODUCTS > 
+    <font class="font-weight-bold text-primary"><%=categoryName.toUpperCase()%></font></p>
 
     <%
     if (pagination) {
@@ -13,16 +14,30 @@
       <%
     }
     %>
-  
+
     <!-- Filter to search for a product name or substring -->
     <div class="container-fluid">
+
       <form class="form-inline" method="post" action="/products">
         <div class="form-group mb-3 pr-2">
+          <!-- <label for="categorySelect" class="pr-2">Category:</label> -->
+          <select class="form-control mr-3" id="categorySelect" name="categorySelect">
+            <option></option>
+            <% for ( var i = 0; i < categoryList.length; i++ ) {
+              var selected = '';
+              if (categoryList[i].name === categoryName) {
+                selected = 'selected';
+              }
+            %>
+              <option <%=selected%> value="<%=categoryList[i].id%>"><%=categoryList[i].name%> - <%=categoryList[i].id%></option>
+            <% } %>
+          </select>
           <label for="productName" class="sr-only">Search by name:</label>
-          <input type="text" class="form-control" id="productName" name="productName" placeholder="Product">
+          <input type="text" class="form-control mr-2" id="productName" name="productName" placeholder="Product">
         </div>
         <button type="submit" class="btn btn-primary mb-3">Search</button>
       </form>
+
     </div>
   
     <hr>

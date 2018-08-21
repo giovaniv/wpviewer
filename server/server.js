@@ -64,13 +64,14 @@ const productsRoutes = require('./routes/products')(products_helpers);
 app.use('/categories', categoriesRoutes);
 app.use('/products', productsRoutes);
 
-app.use(express.static(__dirname + '/public'));
+app.use('*/css',express.static(__dirname + '/public/css'));
 
 app.get("/", (req, res) => { res.render("index") });
 //app.get("/categories", (req, res) => { res.render("categories") });
 // app.get("/products", (req, res) => { res.render("products") });
 app.get("/features", (req, res) => { res.render("features") });
 app.get("/about", (req, res) => { res.render("about") });
+app.get('*', (req, res) => { res.render("404") });
 
 app.listen(PORT, IP, () => {
   console.log("Example app listening on port " + PORT)
