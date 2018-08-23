@@ -1,0 +1,43 @@
+
+<section class="container-fluid">
+
+    <p class="font-weight-bold pl-3">PRODUCTS</p>
+
+    <!-- Filter to search for a product name or substring -->
+    <div class="container-fluid">
+
+      <form class="form-inline justify-content-center" method="post" action="/products">
+        <div class="form-group mb-3 pr-2">
+          <select class="form-control mr-3" id="categorySelect" name="categorySelect">
+            <option selected></option>
+            <% for ( var i = 0; i < categoryList.length; i++ ) {
+            %>
+              <option value="<%=categoryList[i].id%>"><%=categoryList[i].name%></option>
+            <% } %>
+          </select>
+          <label for="productName" class="sr-only">Search by name:</label>
+          <input type="text" class="form-control mr-2" id="productName" 
+          name="productName" placeholder="Product">
+        </div>
+        <button type="submit" class="btn btn-primary mb-3">Search</button>
+        <div class="form-group ml-5 mb-3">
+          <select class="form-control mr-3" id="numSelect" name="numSelect">
+            <% for ( var j = 5; j <= 25; j+=5 ) {
+              var selected = ''; 
+              if (j == 25) {
+                selected = 'selected';
+              }
+              %>
+              <option <%=selected%>><%=j%></option>
+            <% } %>
+          </select><font class="small">results per page</font>
+        </div>
+      </form>
+
+    </div>
+
+    <div class="container-fluid">
+      Main page of products
+    </div>
+
+</section>
