@@ -1,44 +1,62 @@
 "use strict";
 
+let numItems = '';
+let myCategoryID = '';
+let productName = '';
+let next = '';
+let last = '';
+let curr = '';
+let myStep = '';
+let first = '';
+
 const express         = require('express');
 const productsRoutes  = express.Router();
 
 module.exports = function(DataHelpers) {
 
-  // route when we go to URL localhost:port/products same function as POST route but
-  // without filter so we show the first 25 products of the product API list and
-  // if we have a category ID will be because 
+  // route when we go to URL localhost:port/products and the user didn't selected
+  // any category to display. We go to the backend, get all categories and display
+  // the categoryList combobox, the search field and a welcome text
   productsRoutes.get("/", function(req, res) {
-    // Category ID filter when we click in a category
-    let myCategoryID = '';
-    if (req.query.category) {
-      myCategoryID = req.query.category;
-    }
-    DataHelpers.getProductsByCategory(myCategoryID,null,(err,products, pagination, categoryList, categoryName) => {
+    DataHelpers.mountProductFirstPage((err,categoryList) => {
       if (err) {
         res.status(201).render('error',{ err });
       } else {
-        res.status(201).render('products',{ products, pagination, categoryList, categoryName, total: products.length });
+        res.status(201).render('products_home',{ categoryList });
       }
     });
   });
 
-  
   // Route when the user clicks in any category in the category list at categories page
   productsRoutes.get("/category/:id", function(req, res) {
-    // Category ID filter when user clicks in a category
-    let myCategoryID = '';
-    if (req.params.id) {
-      myCategoryID = req.params.id;
-    }
-    DataHelpers.getProductsByCategory(myCategoryID,null,(err,products, pagination, categoryList, categoryName) => {
+    myCategoryID = req.params.id;
+    DataHelpers.getProducts(myCategoryID, null, null, 0, 0, 0, null, null, (err,products, pagination, categoryList, total) => {
       if (err) {
         res.status(201).render('error',{ err });
       } else {
-        res.status(201).render('products',{ products, pagination, categoryList, categoryName, total: products.length });
+        res.status(201).render('products',{ products, pagination, categoryList, total });
       }
     });
   });
+
+  productsRoutes.get('/category/:id/page', function(req,res) {
+    myCategoryID = req.params.id;
+    numItems = req.query.num;
+    last = req.query.last;
+    curr = req.query.curr;
+    next = req.query.next;
+    myStep = req.query.step;
+    first = req.query.first;
+    DataHelpers.getProducts(myCategoryID, null, numItems, last, curr, next, myStep, first, (err,products, pagination, categoryList, total) => {
+      if (err) {
+        res.status(201).render('error',{ err });
+      } else {
+        res.status(201).render('products',{ products, pagination, categoryList, total });
+      }
+    });
+  });
+
+
 
 
   // route when we filter for some product name using the SEARCH button in product page
@@ -46,28 +64,26 @@ module.exports = function(DataHelpers) {
   productsRoutes.post("/", function(req, res) {
 
     // Category ID filter
-    let myCategoryID = '';
-    if (req.body.category) {
-      myCategoryID = req.body.category;
+    if (req.body.categorySelect) {
+      myCategoryID = req.body.categorySelect;
     }
 
-    // Product name filter
-    let productName = '';
-    if (req.body.productName) {
-      productName = req.body.productName;
-    }
+    // Product Name filter
+    productName = req.body.productName;
 
-    console.log(myCategoryID)
-    console.log(productName)
-    console.log(req.body.categorySelect)
+    // Number of Items per page filter
+    if (req.body.numSelect) {
+      numItems = req.body.numSelect;
+    }
 
     // We go to the backend asking for this products, filtered or not
     // and we send it back to the client side, rendering the products.ejs page
-    DataHelpers.getProductsByCategory(myCategoryID,productName,(err,products, pagination, categoryList, categoryName) => {
+    DataHelpers.getProducts(myCategoryID, productName, numItems, null, null, null, null, null, (err,products, pagination, categoryList, total) => {
       if (err) {
         res.status(201).render('error',{ err });
       } else {
-        res.status(201).render('products',{ products, pagination, categoryList, categoryName, total: products.length });
+        console.log(total)
+        res.status(201).render('products',{ products, pagination, categoryList, total });
       }
     });
   });
