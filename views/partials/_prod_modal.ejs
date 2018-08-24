@@ -18,13 +18,21 @@
             <p class="small"><%=myProduct.shortDescription%></p>
             <table class="table table-borderless table-sm">
             <tbody class="small">
-              <tr><td>Status:</td><td><%=myProduct.stock%></td></tr>
+
+              <% if (myProduct.stock) { %>
+                <tr><td>Status:</td><td><%=myProduct.stock%></td></tr>
+              <% } %>
 
               <% var bestPrice = ((myProduct || {}).bestMarketplacePrice || {}).price; %>
-              <tr><td>Best Price:</td><td>C$ <%=bestPrice%></td></tr>
+              <% if (bestPrice) { %>
+                <tr><td>Price:</td><td>C$ <%=bestPrice%></td></tr>
+              <% } else { %>
+                <tr><td>Price:</td><td>C$ <%=myProduct.salePrice%></td></tr>
+              <% } %>
 
-              <tr><td>By:</td><td><%=myProduct.brandName%></td></tr>
-              <tr><td>Status:</td><td><%=myProduct.stock%></td></tr>
+              <% if (myProduct.brandName) { %>
+                <tr><td>By:</td><td><%=myProduct.brandName%></td></tr>
+              <% } %>
 
               <% if (myProduct.customerRatingImage && myProduct.numReviews && myProduct.customerRating) { %>
                 <tr><td>Rating:</td><td>

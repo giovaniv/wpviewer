@@ -58,3 +58,15 @@ a:focus, a:active {
 }
 
 .pagination a:hover:not(.active) {background-color: #ddd;}
+
+* {
+  box-sizing: border-box;
+}
+.img_row {
+  display: flex;
+}
+/* Create three equal columns that sits next to each other */
+.img_column {
+  flex: 33.33%;
+  padding: 5px;
+}

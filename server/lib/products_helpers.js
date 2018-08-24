@@ -63,9 +63,10 @@ module.exports = {
   // Function to get the information for product pagination
   preparePagination: function(list, numItems, categoryName, categoryId, last, curr, next, myStep, firstId) {
 
-    // Garantimos que temos o primeiro id para retornar para a primeira pagina em algum momento
+    // We guarantee that we will get the first page when
+    // we are doing the pagination using PAGINATION API
     let myFirstId = 0;
-    if (!list.maxId) {
+    if (!list.maxId && list.nextPage) {
       myFirstId = list.nextPage.split('&')[1].split('=')[1];
     } else {
       myFirstId = firstId;
@@ -73,23 +74,26 @@ module.exports = {
 
     let myPagination = {
 
+      // Pagination API parameters
       totalPages: list.totalPages ? list.totalPages : 0,
       maxId: list.maxId ? list.maxId : 0,
       nextPage: list.nextPage ? list.nextPage : 0,
-      
-      // ---- pagination control flow
+
+      // Search API parameters
+      query: list.query ? list.query : '',
+      totalResults: list.totalResults ? list.totalResults : 0,
+      start: list.start ? list.start : 0,
+      numItems: numItems,
+
+      // Pagination control-flow
       firstId: myFirstId,
       lastId: 0,
       currId: 0,
-      nextId: list.nextPage.split('&')[1].split('=')[1],
-      // --------------------------
-
-      category: list.category ? list.category : categoryId,
-      totalResults: list.totalResults ? list.totalResults : 0,
-      start: list.start ? list.start : 0,
-      query: list.query ? list.query : '',
+      nextId: list.nextPage ? list.nextPage.split('&')[1].split('=')[1] : 0,
+      
+      // Others important values
       records: 0,
-      numItems: numItems,
+      category: list.category ? list.category : categoryId,
       categoryName: categoryName
 
     }
@@ -107,6 +111,9 @@ module.exports = {
     // console.log('nextId = ', next);
     // console.log('myStep = ', myStep);
     // console.log('MAXID AGORA => ', myPagination.maxId);
+
+
+    console.log('cara...ve se chegou aqui...')
 
     // If the information comes from Pagination API
     if (myPagination.nextPage) {
@@ -287,9 +294,12 @@ module.exports = {
         }
       })
       .then(body=>{
+        console.log('aqui chegou sim...')
         let pagination = module.exports.preparePagination(body, myNumItems, categoryName, categoryID, myLast, myCurr, myNext, myStep, firstId);
+        console.log('aqui nao deve chegar ainda...')
         let myProducts = body.items;
         let total = pagination.records;
+        console.log('chegou aqui?')
         return cb(null,myProducts, pagination, categoryList, total);
         
         // if (queryString) {

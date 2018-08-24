@@ -18,6 +18,7 @@ const morgan = require('morgan');
 const app = express();
 app.set("view engine", "ejs");
 app.use('*/css',express.static(__dirname + '/public/css'));
+app.use('*/imgs',express.static(__dirname + '/public/imgs'));
 
 // MIDDLEWARES
 app.use(morgan('dev'));
@@ -35,7 +36,6 @@ const productsRoutes = require('./routes/products')(products_helpers);
 app.use('/categories', categoriesRoutes);
 app.use('/products', productsRoutes);
 app.get("/", (req, res) => { res.render("index") });
-app.get("/features", (req, res) => { res.render("features") });
 app.get("/about", (req, res) => { res.render("about") });
 app.get('*', (req, res) => { res.render("404") });
 
