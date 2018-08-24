@@ -1,39 +1,28 @@
 
-<section class="container-fluid">
+<%
+var myQuery = '';
+if (pagination) {
+  myQuery = pagination.query
+}
 
-  <p class="font-weight-bold pl-3">PRODUCTS > 
-  <font class="font-weight-bold text-primary"><%=pagination.categoryName.toUpperCase()%></font></p>
+var totalProducts = '';
+if (products && products.length > 0) {
+  totalProducts = products.length;
+}
+%>
 
-  <%
-  if (pagination) {
-    %>
-    <font class="small">
-    totalPages: <%=pagination.totalPages%><br>
-    maxId: <%=pagination.maxId%><br>
-    nextPage: <%=pagination.nextPage%><br>
-    nextId: <%=pagination.nextId%><br>
-    category: <%=pagination.category%><br>
-    totalResults: <%=pagination.totalResults%><br>
-    start: <%=pagination.start%><br>
-    query: <%=pagination.query%><br>
-    records: <%=pagination.records%><br>
-    numItems: <%=pagination.numItems%><br>
-    categoryName: <%=pagination.categoryName%>
-    </font>
-    <%
-  }
-  %>
+<section class="container mt-3 bg-light border border-info shadow rounded p-3">
 
-  <%
-  var myQuery = '';
-  if (pagination) {
-    myQuery = pagination.query
-  }
-  %>
+  <% if (totalProducts) { %>
+    <h3 class="display-7 text-center">
+      Products > <font class="font-weight-bold text-primary"><%=pagination.categoryName.toUpperCase()%></font>
+    </h3>
+  <% } else { %>
+    <h3 class="display-7 text-center">Products</h3>
+  <% } %>
 
-  <!-- Filter to search for a product name or substring -->
-  <div class="container-fluid">
-
+  <!-- FILTER TO SEARCH FOR A PRODUCT NAME OR SUBSTRING -->
+  <div class="container-fluid mt-5">
     <form class="form-inline justify-content-center" method="post" action="/products">
       <div class="form-group mb-3 pr-2">
         <select class="form-control mr-3" id="categorySelect" name="categorySelect" required>
@@ -65,48 +54,64 @@
         </select><font class="small">results per page</font>
       </div>
     </form>
-
   </div>
 
-  <hr>
-  <!-- product pagination -->
-  <%- include('_prod_pagination', { pagination }) %>
-  <hr>
-  <div class="container-fluid">
-    <div class="row">
-      <%
-      var limitNum = pagination.numItems;
-      if (pagination.records < limitNum) {
-        limitNum = pagination.records;
-      }
-      %>
-      <% for (var i = 0; i < limitNum; i++) { %>
-        <% if (i > 0 && i % 5 === 0) { %>
-          <div class="w-100"></div>
-        <% } %>
-        <div class="col">
-          <a href="#" data-toggle="modal" data-target="#exampleModalCenter<%=i%>">
-            <div class="card mb-3">
-              <img class="card-img-top pt-2" src="<%=products[i].thumbnailImage%>">
-              <div class="card-body border-info">
-                <p class="card-text">
-                  <%=products[i].name.substring(0,15)%>...<br>
-                  <span class="badge badge-pill badge-success"><%=products[i].stock%></span><br>
-                  <% var price = ((products[i] || {}).bestMarketplacePrice || {}).price; %>
-                  <% if (price) { %>
-                    <span class="badge badge-pill badge-info">C$ <%=price%></span><br>
-                  <% } else { %>
-                    <span class="badge badge-pill badge-info">C$ <%=products[i].salePrice%></span><br>
-                  <% } %>
-                </p>
+  <% if (totalProducts) { %>
+    <!-- PRODUCT PAGINATION -->
+    <%- include('_prod_pagination', { pagination, totalProducts }) %>
+  <% } %>
+
+  <!-- PRODUCT RESULT -->
+  <div class="container mt-5 mb-5">
+    <% if (totalProducts) { %>
+      <div class="row">
+        <%
+        var limitNum = pagination.numItems;
+        if (pagination.records < limitNum) {
+          limitNum = pagination.records;
+        }
+        if (totalProducts < limitNum) {
+          limitNum = totalProducts;
+        }
+        %>
+        <% for (var i = 0; i < limitNum; i++) { %>
+          <% if (i > 0 && i % 5 === 0) { %>
+            <div class="w-100"></div>
+          <% } %>
+          <div class="col mb-3">
+            <a href="#" data-toggle="modal" data-target="#exampleModalCenter<%=i%>">
+              <div class="card mb-3" style="height:100%;">
+                <img class="card-img-top pt-2" src="<%=products[i].thumbnailImage%>">
+                <div class="card-body border-info">
+                  <p class="card-text pb-2">
+                    <small><%=products[i].name%></small><br><br>
+                    <% var price = ((products[i] || {}).bestMarketplacePrice || {}).price; %>
+                    <% if (price) { %>
+                      <span class="badge badge-pill badge-info">C$ <%=price%></span><br>
+                    <% } else { %>
+                      <span class="badge badge-pill badge-info">C$ <%=products[i].salePrice%></span><br>
+                    <% } %>
+                    <%
+                    var myBadge = 'dark';
+                    if (products[i].stock == 'Not available') { myBadge = 'danger'; }
+                    if (products[i].stock == 'Available') { myBadge = 'success'; }
+                    if (products[i].stock == 'Limited supply') { myBadge = 'secondary'; }
+                    if (products[i].stock == 'Last Few Items') { myBadge = 'warning'; }
+                    %>
+                    <span class="badge badge-pill badge-<%=myBadge%>"><%=products[i].stock%></span>
+                  </p>
+                </div>
               </div>
-            </div>
-          </a>
-          <!-- product detail modal window -->
-          <%- include('_prod_modal', { pos:i, myProduct:products[i] }) %>
-        </div>
-      <% } %>
-    </div>
+            </a>
+            <!-- PRODUCT DETAIL MODAL -->
+            <%- include('_prod_modal', { pos:i, myProduct:products[i] }) %>
+          </div>
+        <% } %>
+      </div>
+    <% } else { %>
+      <!-- if any category was found (category is empty in the backend) -->
+      <%- include('_no_result') %>
+    <% } %>
   </div>
     
 </section>

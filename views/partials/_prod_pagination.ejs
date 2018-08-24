@@ -16,10 +16,13 @@ if (!pagination.nextPage) {
 %>
 <div class="container=fluid text-secondary rounded text-center">
   <p class="small">
-    <%=pagination.records.toLocaleString()%> product(s) found
+    <% if (!pagination.nextPage) { %>
+      <%=pagination.records.toLocaleString()%> product(s) found
+    <% } else { %>
+      Showing current <%=num%> product(s)
+    <% } %>
   </p>
   <p>
-    <%=last%>, <%=curr%>, <%=next%>
     <div class="pagination small">
       <!-- If the results comes from Search API -->
       <% if (!pagination.nextPage) { %>

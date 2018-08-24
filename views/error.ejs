@@ -7,8 +7,13 @@
     <%- include('partials/_navbar') %>
 
     <!-- MAIN CONTENT -->
-    <section class="container-fluid">
-        <p class="font-weight-bold pl-3 text-danger"><%=err%></p>
+    <section class="container mt-3 bg-light border border-info text-danger shadow rounded p-3">
+      <h3 class="display-7 text-center">Sorry...</h3>
+      <p class="text-center mt-3">
+        You're trying a path that we don't have or typed something wrong.<br><br>
+        Try to use the links of the WebApp or check the message above to help.<br><br>
+        "<%=err%>"
+      </p>
     </section>
 
     <!-- FOOTER -->
