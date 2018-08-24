@@ -9,7 +9,7 @@
       <form class="form-inline justify-content-center" method="post" action="/products">
         <div class="form-group mb-3 pr-2">
           <select class="form-control mr-3" id="categorySelect" name="categorySelect">
-            <option selected></option>
+            <option value="0" selected></option>
             <% for ( var i = 0; i < categoryList.length; i++ ) {
             %>
               <option value="<%=categoryList[i].id%>"><%=categoryList[i].name%></option>
@@ -37,7 +37,10 @@
     </div>
 
     <div class="container-fluid">
-      Main page of products
+      <div class="jumbotron m-2 bg-light border border-info">
+        <h6 class="display-7">Product Search</h6>
+        <p class="small">Here you're able to search for a product by name or just selecting the category and items per page</p>
+      </div>
     </div>
 
 </section>

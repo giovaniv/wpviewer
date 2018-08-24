@@ -1,75 +1,24 @@
 "use strict";
 
 let request = require('request');
-let request_promise = require('request-promise');
 
 module.exports = {
 
-  // Function to get the total of products of each category
-  // NOT USED UNTIL NOW BECAUSE I NEED TO CHECK THE REQUEST_PROMISE ISSUE
-  getTotalProductsByCategory: function(category_id) {
-    let myTotal = 0;
-    let myUrl = process.env.WALMART_PAGINATED + 'category=' + category_id;
-    myUrl += '&apiKey=' + process.env.WALMART_KEY + '&count=1';
-    // request.get({ url: myUrl }, function(err, resp, body) {
-    //   if (!err && resp.statusCode == 200) {
-    //     myTotal = JSON.parse(body).totalPages;
-    //   }
-    // });
-    // return myTotal;
-    return request_promise({
-      "method":"GET", 
-      "uri": myUrl,
-      "json": true,
-      "headers": {
-        "User-Agent": "wpviewer"
-      }
-    })
-    .then(body=>{
-      //console.log(body.totalPages)
-      myTotal = body.totalPages;
-      return myTotal;
-      //console.log(body)
-      //console.log(JSON.parse(body))
-    })
-    .catch(err=>{
-      return myTotal;
-    })
-    //console.log('resultado: ', myTotal)
-  },
-
   // Function to prepare the categories object with
   // all the information that we need to show.
-  // I only check for the main category and avoid the
-  // children categories until now.
-  // Maybe a future improvement if I have time.
+  // If I have time, improve it inserting the children categories
+  // and the total of products of each category
   prepareCategories: function(list) {
     let result = [];
     list.forEach((key)=>{
-      //console.log(key.id, key.name)
-      //let teste = 0;
       let myCategory = {
         id: key.id,
         name: key.name,
         total: 0
       }
-      //let myTotal = Promise.resolve(module.exports.getTotalProductsByCategory(key.id))
-      //console.log('resultado: ', myTotal)
-      //myTotal.then((totalProducts) => {
-        //console.log('total: ', content);
-        //console.log('myCategory.total: ', myCategory.total);
-        //teste = totalProducts;
-        //myCategory.total = totalProducts;
-        //console.log(myCategory)
-        //result.push(myCategory)
-      //})
-      //.catch(err=>{
-        //result.push(myCategory)
-      //})
-      //console.log(teste)
-      result.push(myCategory)
+      result.push(myCategory);
     })
-    return result
+    return result;
   },
 
   // Function to filter categories by name
@@ -94,19 +43,21 @@ module.exports = {
 
       // If we don't have an error we handle the API content using the
       // prepareCategories function to create the category object that we need
-      // and the filterCategories function is only called when the client typed
-      // something in the text field and click in the SEARCH button
+      // and the filterCategories function is only called when the client type
+      // something in the text field and click on the SEARCH button
       if (!err && resp.statusCode == 200) {
         let myData = JSON.parse(body);
         let objCategories = myData.categories;
-        let categories = module.exports.prepareCategories(objCategories)
+        let categories = module.exports.prepareCategories(objCategories);
         let myCategories = [];
         if (name) {
-          myCategories = module.exports.filterCategories(name, categories)
+          myCategories = module.exports.filterCategories(name, categories);
         } else {
-          myCategories = categories
+          myCategories = categories;
         }
-        return cb(null,myCategories)
+        return cb(null,myCategories);
+      } else {
+        return cb('Error requesting Taxonomy API');
       }
 
     });

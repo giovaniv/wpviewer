@@ -9,7 +9,7 @@ let curr = '';
 let myStep = '';
 let first = '';
 
-const express         = require('express');
+const express = require('express');
 const productsRoutes  = express.Router();
 
 module.exports = function(DataHelpers) {
@@ -29,7 +29,11 @@ module.exports = function(DataHelpers) {
 
   // Route when the user clicks in any category in the category list at categories page
   productsRoutes.get("/category/:id", function(req, res) {
-    myCategoryID = req.params.id;
+    // We check if we have a category ID and if not we come back
+    let myCategoryID = req.params.id ? req.params.id : 0; 
+    if (!myCategoryID || myCategoryID === 0) {
+      res.status(201).render('error', { err: 'A valid category needs to be selected' });
+    }
     DataHelpers.getProducts(myCategoryID, null, null, 0, 0, 0, null, null, (err,products, pagination, categoryList, total) => {
       if (err) {
         res.status(201).render('error',{ err });
@@ -63,9 +67,14 @@ module.exports = function(DataHelpers) {
   // POST because we don't want to show the queryString in the address bar as a security reason
   productsRoutes.post("/", function(req, res) {
 
+    console.log('category select = ', req.body.categorySelect);
+
     // Category ID filter
-    if (req.body.categorySelect) {
+    if (req.body.categorySelect != 0) {
       myCategoryID = req.body.categorySelect;
+    } else {
+      console.log('entrou aqui')
+      return;
     }
 
     // Product Name filter

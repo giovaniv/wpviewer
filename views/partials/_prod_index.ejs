@@ -1,266 +1,107 @@
 
 <section class="container-fluid">
 
-    <p class="font-weight-bold pl-3">PRODUCTS > 
-    <font class="font-weight-bold text-primary"><%=pagination.categoryName.toUpperCase()%></font></p>
+  <p class="font-weight-bold pl-3">PRODUCTS > 
+  <font class="font-weight-bold text-primary"><%=pagination.categoryName.toUpperCase()%></font></p>
 
+  <%
+  if (pagination) {
+    %>
+    <font class="small">
+    totalPages: <%=pagination.totalPages%><br>
+    maxId: <%=pagination.maxId%><br>
+    nextPage: <%=pagination.nextPage%><br>
+    nextId: <%=pagination.nextId%><br>
+    category: <%=pagination.category%><br>
+    totalResults: <%=pagination.totalResults%><br>
+    start: <%=pagination.start%><br>
+    query: <%=pagination.query%><br>
+    records: <%=pagination.records%><br>
+    numItems: <%=pagination.numItems%><br>
+    categoryName: <%=pagination.categoryName%>
+    </font>
     <%
-    if (pagination) {
-      %>
-      <font class="small">
-      totalPages: <%=pagination.totalPages%><br>
-      maxId: <%=pagination.maxId%><br>
-      nextPage: <%=pagination.nextPage%><br>
-      category: <%=pagination.category%><br>
-      totalResults: <%=pagination.totalResults%><br>
-      start: <%=pagination.start%><br>
-      query: <%=pagination.query%><br>
-      records: <%=pagination.records%><br>
-      numItems: <%=pagination.numItems%><br>
-      categoryName: <%=pagination.categoryName%>
-      </font>
+  }
+  %>
+
+  <%
+  var myQuery = '';
+  if (pagination) {
+    myQuery = pagination.query
+  }
+  %>
+
+  <!-- Filter to search for a product name or substring -->
+  <div class="container-fluid">
+
+    <form class="form-inline justify-content-center" method="post" action="/products">
+      <div class="form-group mb-3 pr-2">
+        <select class="form-control mr-3" id="categorySelect" name="categorySelect">
+          <option value="0"></option>
+          <% for ( var i = 0; i < categoryList.length; i++ ) {
+            var selected = '';
+            if (categoryList[i].name === pagination.categoryName) {
+              selected = 'selected';
+            }
+          %>
+            <option <%=selected%> value="<%=categoryList[i].id%>"><%=categoryList[i].name%></option>
+          <% } %>
+        </select>
+        <label for="productName" class="sr-only">Search by name:</label>
+        <input type="text" class="form-control mr-2" id="productName" 
+        name="productName" placeholder="Product" value="<%=myQuery%>">
+      </div>
+      <button type="submit" class="btn btn-primary mb-3">Search</button>
+      <div class="form-group ml-5 mb-3">
+        <select class="form-control mr-3" id="numSelect" name="numSelect">
+          <% for ( var j = 5; j <= 25; j+=5 ) {
+            var selected = ''; 
+            if (j <= pagination.numItems) {
+              selected = 'selected';
+            }
+            %>
+            <option <%=selected%>><%=j%></option>
+          <% } %>
+        </select><font class="small">results per page</font>
+      </div>
+    </form>
+
+  </div>
+
+  <hr>
+  <!-- product pagination -->
+  <%- include('_prod_pagination', { pagination }) %>
+  <hr>
+  <div class="container-fluid">
+    <div class="row">
       <%
-    }
-    %>
-
-    <%
-    var myQuery = '';
-    if (pagination) {
-      myQuery = pagination.query
-    }
-    %>
-
-    <!-- Filter to search for a product name or substring -->
-    <div class="container-fluid">
-
-      <form class="form-inline justify-content-center" method="post" action="/products">
-        <div class="form-group mb-3 pr-2">
-          <select class="form-control mr-3" id="categorySelect" name="categorySelect">
-            <option></option>
-            <% for ( var i = 0; i < categoryList.length; i++ ) {
-              var selected = '';
-              if (categoryList[i].name === pagination.categoryName) {
-                selected = 'selected';
-              }
-            %>
-              <option <%=selected%> value="<%=categoryList[i].id%>"><%=categoryList[i].name%></option>
-            <% } %>
-          </select>
-          <label for="productName" class="sr-only">Search by name:</label>
-          <input type="text" class="form-control mr-2" id="productName" 
-          name="productName" placeholder="Product" value="<%=myQuery%>">
-        </div>
-        <button type="submit" class="btn btn-primary mb-3">Search</button>
-        <div class="form-group ml-5 mb-3">
-          <select class="form-control mr-3" id="numSelect" name="numSelect">
-            <% for ( var j = 5; j <= 25; j+=5 ) {
-              var selected = ''; 
-              if (j <= pagination.numItems) {
-                selected = 'selected';
-              }
-              %>
-              <option <%=selected%>><%=j%></option>
-            <% } %>
-          </select><font class="small">results per page</font>
-        </div>
-      </form>
-
-    </div>
-  
-    <hr>
-    <!-- product pagination -->
-    <%- include('_prod_pagination', { pagination }) %>
-    <hr>
-  
-  <!-- 
-    List of Products, where:
-    maxCols => Number of columns that our list have
-    maxRows => Number of products in each column
-    ini => Start element of our list of products
-    end => Last element in our list for each column
-    total => products.length (backend send that)
-    products => array of products objects (all properties of Walmart Open API product item)
-   -->
-  <% if (products) {
-    var maxCols = 5;
-    var maxRows = parseInt(total / maxCols);
-    var ini = 0;
-    var end = maxRows;
-    %>
-      <!-- In this scenario, to avoid slow loading of the page, we force a limit of
-      25 results in each page and as we work with default 5 columns (maxCols) we
-      display 5 products in each col. To look for the next 25 products, if this happens,
-      the user needs to use the pagination in the right of the FILTER area -->
-      <% if (total > maxCols) { %>
-        <div class="container-fluid">
-          <div class="row">
-            <% for (var i = 0; i < maxCols; i++) { %>
-            <div class="col">
-                <%
-                if (end > total) {
-                  end = total;
-                }
-                %>
-                <% for (var j = ini; j < end; j++) { %>
-                  <a href="#" data-toggle="modal" data-target="#exampleModalCenter<%=j%>">
-                    <div class="card mb-3">
-                      <img class="card-img-top pt-2" src="<%=products[j].thumbnailImage%>">
-                      <div class="card-body border-info">
-                        <p class="card-text">
-                          <%=products[j].name.substring(0,15)%>...<br>
-                          <span class="badge badge-pill badge-success"><%=products[j].stock%></span><br>
-                          <span class="badge badge-pill badge-info">C$ <%=products[j].salePrice%></span><br>
-                        </p>
-                      </div>
-                    </div>
-                  </a>
-                  <!-- product detail modal window -->
-                  <%- include('_prod_modal', { pos:j, myProduct:products[j] }) %>
-                <% }
-                ini = end;
-                end += maxRows;
-                %>
+      var limitNum = pagination.numItems;
+      if (pagination.records < limitNum) {
+        limitNum = pagination.records;
+      }
+      %>
+      <% for (var i = 0; i < limitNum; i++) { %>
+        <% if (i > 0 && i % 5 === 0) { %>
+          <div class="w-100"></div>
+        <% } %>
+        <div class="col">
+          <a href="#" data-toggle="modal" data-target="#exampleModalCenter<%=i%>">
+            <div class="card mb-3">
+              <img class="card-img-top pt-2" src="<%=products[i].thumbnailImage%>">
+              <div class="card-body border-info">
+                <p class="card-text">
+                  <%=products[i].name.substring(0,15)%>...<br>
+                  <span class="badge badge-pill badge-success"><%=products[i].stock%></span><br>
+                  <span class="badge badge-pill badge-info">C$ <%=products[i].salePrice%></span><br>
+                </p>
+              </div>
             </div>
-            <% } 
-            %>
-          </div>
+          </a>
+          <!-- product detail modal window -->
+          <%- include('_prod_modal', { pos:i, myProduct:products[i] }) %>
         </div>
-      <% } else if (total > 0 && total <= maxCols) { %>
-        <div class="container-fluid">
-          <div class="row">
-            <% for (var j = 0; j < total; j++) { %>
-            <div class="col">
-              <a href="#" data-toggle="modal" data-target="#exampleModalCenter<%=j%>">
-                <div class="card mb-3">
-                  <img class="card-img-top pt-2" src="<%=products[j].thumbnailImage%>">
-                  <div class="card-body border-info">
-                    <p class="card-text">
-                      <%=products[j].name.substring(0,15)%>...<br>
-                      <span class="badge badge-pill badge-success"><%=products[j].stock%></span><br>
-                      <span class="badge badge-pill badge-info">C$ <%=products[j].salePrice%></span><br>
-                    </p>
-                  </div>
-                </div>
-              </a>
-              <!-- product detail modal window -->
-              <%- include('_prod_modal', { pos:j, myProduct:products[j] }) %>
-            </div>
-            <% } %>
-            <div class="col"></div>
-            <div class="col"></div>
-          </div>
-        </div>
-      <% } else { %>
-        <!-- if not product was found (filter returns no products) -->
-        <%- include('_no_result') %>
       <% } %>
-  <% } else { %>
-    <!-- if not product was found (products is empty in the backend) -->
-    <%- include('_no_result') %>
-  <% } %>
-
+    </div>
+  </div>
+    
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- LIST OF PRODUCTS OF A CATEGORY
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col">
-          
-          <div class="card">
-            <img class="card-img-top" src="http://lorempixel.com/400/200/food" alt="Product name">
-            <div class="card-body">
-              <h5 class="card-title">Patterns for Stained Glass Boxes</h5>
-              <p class="card-text">
-                <span class="badge badge-light">C$ 14.95</span><br>
-                <span class="badge badge-danger">not available</span>
-              </p>
-              <a href="#" class="btn btn-primary">Details</a>
-            </div>
-          </div>
-
-        </div>
-        <div class="col">
-
-            name, 
-            msrp or salePrice
-            stock
-            thumbnailImage
-            customerRating (se nao tiver mostra "no rated")
-            customerRatingImage
-          -->
-
-          <!-- <div class="card">
-            <img class="card-img-top" src="http://lorempixel.com/400/200/sports" alt="Product name">
-            <div class="card-body">
-              <h5 class="card-title">Patterns for Stained Glass Boxes</h5>
-              <p class="card-text">
-                <span class="badge badge-light">C$ 14.95</span><br>
-                <span class="badge badge-warning">Limited supply</span>
-              </p>
-              <a href="#" class="btn btn-primary">Details</a>
-            </div>
-          </div>
-
-        </div>
-        <div class="col"> -->
-
-          <!-- <div class="card">
-            <img class="card-img-top" src="http://lorempixel.com/400/200/city" alt="Product name">
-            <div class="card-body">
-              <h5 class="card-title">Patterns for Stained Glass Boxes</h5>
-              <p class="card-text">
-                <span class="badge badge-light">C$ 14.95</span><br>
-                <span class="badge badge-success">Available</span>
-              </p> -->
-              <!-- <a href="#" class="btn btn-primary">Details</a> -->
-              <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                Details
-              </button>
-            </div>
-          </div>
-
-        </div>
-        <div class="col">
-          coluna 4
-        </div>
-        <div class="col">
-          coluna 5
-        </div>
-      </div>
-    </div> -->
-  
-
-    <!-- PRODUCT DETAIL MODAL -->
-    <!-- <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Patterns for Stained Glass Boxes</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            All product information comes here
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
-  <!-- </section> -->
