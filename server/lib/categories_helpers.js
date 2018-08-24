@@ -57,7 +57,7 @@ module.exports = {
         }
         return cb(null,myCategories);
       } else {
-        return cb('Error requesting Taxonomy API');
+        return cb(err);
       }
 
     });

@@ -1,94 +1,55 @@
 
 <section class="container-fluid">
 
-  <p class="font-weight-bold pl-3">CATEGORIES</p>
-
-  <!-- Filter to search for a category name or substring -->
-  <div class="container-fluid">
-    <form class="form-inline" method="post" action="/categories">
-      <div class="form-group mb-3 pr-2">
-        <label for="categoryName" class="sr-only">Search by name:</label>
-        <input type="text" class="form-control" id="categoryName" name="categoryName" placeholder="Category">
-      </div>
-      <button type="submit" class="btn btn-primary mb-3">Search</button>
-    </form>
-  </div>
-
-  <hr>
-
-  <!-- 
-    List of Categories, where:
-    maxCols => Number of columns that our list have
-    maxRows => Number of categories in each column
-    ini => Start element of our list of categories
-    end => Last element in our list for each column
-    total => categories.length (backend send that)
-    categories => array of category objects (id, name and total)
-   -->
-  <% if (categories) {
-    var maxCols = 5;
-    var maxRows = parseInt(total / maxCols) + 1;
-    var ini = 0;
-    var end = maxRows;
-    %>
-      <!-- If the total of categories is higher than total of columns
-      that we have, we need to separate the result into this maxCols (default 5)
-      Example: If we have 32 categories and 5 cols, we will show 7 in the
-      first 4 columns and 4 categories in the last one -->
-      <% if (total > maxCols) { %>
-        <div class="container-fluid">
-          <div class="row">
-            <% for (var i = 0; i < maxCols; i++) { %>
-            <div class="col">
-              <ul class="list-group">
-                <%
-                if (end > total) {
-                  end = total;
-                }
-                %>
-                <% for (var j = ini; j < end; j++) { %>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a href="/products/category/<%=categories[j].id%>">
-                      <font class="small"><%=categories[j].name%></font>
-                    </a>
-                  </li>
-                <% }
-                ini = end;
-                end += maxRows;
-                %>
-              </ul>
-            </div>
-            <% } 
-            %>
-          </div>
+    <p class="font-weight-bold pl-3">CATEGORIES</p>
+  
+    <!-- Filter to search for a category name or substring -->
+    <div class="container-fluid">
+      <form class="form-inline" method="post" action="/categories">
+        <div class="form-group mb-3 pr-2">
+          <label for="categoryName" class="sr-only">Search by name:</label>
+          <input type="text" class="form-control" id="categoryName" name="categoryName" placeholder="Category">
         </div>
-      <!-- If we have categories to show but only 5 or less we don't
-      need to adjust the result into the rows so we just show it -->
-      <% } else if (total > 0 && total <= maxCols) { %>
-        <div class="container-fluid">
-          <div class="row">
-            <% for (var j = 0; j < total; j++) { %>
-            <div class="col">
-              <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <a href="/products/category/<%=categories[j].id%>">
-                    <font class="small"><%=categories[j].name%></font>
-                  </a>
-                </li>
-              </ul>
-            </div>
+        <button type="submit" class="btn btn-primary mb-3">Search</button>
+      </form>
+    </div>
+    
+    <hr>
+  
+    <div class="container-fluid">
+      <% if (categories && categories.length > 0) { %>
+        <div class="row">
+          <% for (var i = 0; i < categories.length; i++) { %>
+            <% if (i > 0 && i % 4 === 0) { %>
+              <div class="w-100"></div>
             <% } %>
-            <div class="col"></div>
-            <div class="col"></div>
-          </div>
+            <div class="col">
+              <a href="/products/category/<%=categories[i].id%>">
+                <font class="small"><%=categories[i].name%></font>
+              </a>
+            </div>
+          <% } %>
         </div>
-      <% } else { %>
-        <!-- if any category was found (filter returns no categories) -->
+      <%} else { %>
+        <!-- if any category was found (category is empty in the backend) -->
         <%- include('_no_result') %>
       <% } %>
-  <% } else { %>
-    <!-- if any category was found (category is empty in the backend) -->
-    <%- include('_no_result') %>
-  <% } %>
-
-</section>
+    </div>
+  
+    <!-- <div class="container-fluid">
+      <div class="row">
+        <% for (var j = 0; j < total; j++) { %>
+        <div class="col">
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <a href="/products/category/category_id">
+                <font class="small">category_name</font>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <% } %>
+      </div>
+    </div> -->
+  
+  </section>
