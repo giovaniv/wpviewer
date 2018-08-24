@@ -1,11 +1,9 @@
+<section class="container mt-3 bg-light border border-info shadow rounded p-3">
 
-<section class="container-fluid">
-
-    <p class="font-weight-bold pl-3">PRODUCTS</p>
-
+    <h3 class="display-7 text-center">Products Search</h3>
+  
     <!-- Filter to search for a product name or substring -->
-    <div class="container-fluid">
-
+    <div class="container-fluid mt-5">
       <form class="form-inline justify-content-center" method="post" action="/products">
         <div class="form-group mb-3 pr-2">
           <select class="form-control mr-3" id="categorySelect" name="categorySelect" required>
@@ -33,18 +31,28 @@
           </select><font class="small">results per page</font>
         </div>
       </form>
-
     </div>
 
+    <!-- Product Search presentation -->
     <div class="container-fluid">
-      <!-- If the user didnt select a category we alert about it -->
       <% if (locals.msg) { %>
         <div class="alert alert-danger text-center" role="alert"><%=locals.msg%></div>
       <% } %>
-      <div class="jumbotron m-2 bg-light border border-info">
-        <h6 class="display-7">Product Search</h6>
-        <p class="small">Here you're able to search for a product by name or just selecting the category and items per page</p>
+      <div class="container mt-5 mb-5">
+
+        <h6 class="display-7"><b>Product search</b></h6>
+        <p class="small pb-4">Here you can search for a product by name or just
+        select a category and items per page</p>
+
+        <h6 class="display-7"><b>Category selection</b></h6>
+        <p class="small pb-4">Remember that you need to select a category or you'll
+        receive a message warning about it</p>
+
+        <h6 class="display-7"><b>Product detail modal</b></h6>
+        <p class="small">After search you can click in any product to see the details
+        in a modal window</p>
+
       </div>
     </div>
-
-</section>
+    
+  </section>

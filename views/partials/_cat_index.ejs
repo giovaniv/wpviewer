@@ -1,10 +1,10 @@
 
-<section class="container-fluid">
+<section class="container mt-3 bg-light border border-info shadow rounded p-3">
 
-  <p class="font-weight-bold pl-3">CATEGORIES</p>
+  <h3 class="display-7 text-center">Category List</h3>
 
   <!-- Filter to search for a category name or substring -->
-  <div class="container-fluid">
+  <div class="container-fluid mt-5">
     <form class="form-inline justify-content-center" method="post" action="/categories">
       <div class="form-group mb-3 pr-2">
         <label for="categoryName" class="sr-only">Search by name:</label>
@@ -15,21 +15,21 @@
   </div>
 
   <!-- CATEGORY LIST -->
-  <div class="container-fluid">
+  <div class="container mt-5 mb-5">
     <% if (categories && categories.length > 0) { %>
-      <div class="jumbotron m-1 bg-light border border-info">
-        <div class="row">
-          <% for (var i = 0; i < categories.length; i++) { %>
-            <% if (i > 0 && i % 4 === 0) { %>
-              <div class="w-100"></div>
-            <% } %>
-            <div class="col text-left">
-              <a href="/products/category/<%=categories[i].id%>">
-                <font class="small"><%=categories[i].name%></font>
-              </a>
-            </div>
+      <div class="row text-left">
+        <% for (var i = 0; i < categories.length; i++) { %>
+          <% if (i > 0 && i % 4 === 0) { %>
+            <div class="w-100"></div>
+          <% } else { %>
+            <div class="w-*"></div>
           <% } %>
-        </div>
+          <div class="col text-left">
+            <a href="/products/category/<%=categories[i].id%>">
+              <font class="small"><%=categories[i].name%></font>
+            </a>
+          </div>
+        <% } %>
       </div>
     <%} else { %>
       <!-- if any category was found (category is empty in the backend) -->

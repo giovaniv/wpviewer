@@ -1,29 +1,37 @@
+
+<%
+var first = pagination.firstId;
+var last = pagination.lastId;
+var curr = pagination.currId;
+var next = pagination.nextId;
+var cat = pagination.category;
+var num = pagination.numItems;
+var query = pagination.query;
+var url = '';
+if (!pagination.nextPage) {
+  url = 'http://localhost:7000/products/search/';
+} else {
+  url = 'http://localhost:7000/products/category/';
+}
+%>
 <div class="container=fluid text-secondary rounded text-center">
   <p class="small">
     <%=pagination.records.toLocaleString()%> product(s) found
   </p>
   <p>
-    <!-- If the results comes from Search API -->
-    <% if (!pagination.nextPage) { %>
-      <div class="pagination small">
-        <a href="#">Previous</a>
-        <a href="#">Next</a>
-      </div>
-    <% } else { %>
-      <%
-      var first = pagination.firstId;
-      var last = pagination.lastId;
-      var curr = pagination.currId;
-      var next = pagination.nextId;
-      var cat = pagination.category;
-      var num = pagination.numItems;
-      var url = 'http://localhost:7000/products/category/';
-      %>
-      <%=last%>, <%=curr%>, <%=next%>
-      <div class="pagination small">
+    <%=last%>, <%=curr%>, <%=next%>
+    <div class="pagination small">
+      <!-- If the results comes from Search API -->
+      <% if (!pagination.nextPage) { %>
+        <% if (last != 0) { %>
+          <a href="<%=url%>?id=<%=cat%>&num=<%=num%>&q=<%=query%>&first=<%=first%>&last=<%=last%>&curr=<%=curr%>&next=<%=next%>&step=left">&laquo; Previous Page</a>
+        <% } %>
+        <a href="<%=url%>?id=<%=cat%>&num=<%=num%>&q=<%=query%>&first=<%=first%>&last=<%=last%>&curr=<%=curr%>&next=<%=next%>&step=right">Next Page &raquo;</a>
+      <!-- If the results comes from Pagination API -->
+      <% } else { %>
         <a href="<%=url%><%=cat%>/page/?num=<%=num%>&first=<%=first%>&last=<%=last%>&curr=<%=curr%>&next=<%=next%>&step=left">&laquo; Previous Page</a>
         <a href="<%=url%><%=cat%>/page/?num=<%=num%>&first=<%=first%>&last=<%=last%>&curr=<%=curr%>&next=<%=next%>&step=right">Next Page &raquo;</a>
-      </div>
-    <% } %>
+      <% } %>
+    </div>
   </p>
 </div>

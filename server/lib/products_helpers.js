@@ -60,7 +60,7 @@ module.exports = {
     })
   },
 
-  // Function to get the information for product pagination
+  // Function to prepare the pagination for both cases (Pagination and Search API)
   preparePagination: function(list, numItems, categoryName, categoryId, last, curr, next, myStep, firstId) {
 
     // We guarantee that we will get the first page when
@@ -105,16 +105,6 @@ module.exports = {
       myPagination.records = myPagination.totalResults;
     }
 
-    // console.log('=== parametros recebidos pelo objeto de paginacao ===');
-    // console.log('lastId = ', last);
-    // console.log('currId = ', curr);
-    // console.log('nextId = ', next);
-    // console.log('myStep = ', myStep);
-    // console.log('MAXID AGORA => ', myPagination.maxId);
-
-
-    console.log('cara...ve se chegou aqui...')
-
     // If the information comes from Pagination API
     if (myPagination.nextPage) {
 
@@ -139,31 +129,30 @@ module.exports = {
 
       }
 
-      // if (myStep == 'right') {
-      //   myPagination.lastId = last;
-      //   myPagination.currId = curr;
-      // } else if (myStep == 'left') {
-      //   console.log('TODO - objeto de paginacao para previous page')
-      //   console.log('=== objeto de paginacao atual ===');
-      //   console.log('lastId = ', myPagination.lastId);
-      //   console.log('currId = ', myPagination.currId);
-      //   console.log('nextId = ', myPagination.nextId);
-      //   console.log('--- MAXID ---', myPagination.maxId);
-      //   myPagination.lastId = last;
-      //   myPagination.currId = curr;
-      //   myPagination.nextId = next;
-      // }
-
     // If the information comes from Search API
     } else {
-      console.log('TODO - paginacao quando usamos Search API')
-    }
 
-    // console.log('=== objeto de paginacao que sera retornado ===');
-    // console.log('lastId = ', myPagination.lastId);
-    // console.log('currId = ', myPagination.currId);
-    // console.log('nextId = ', myPagination.nextId);
-    // console.log('firstId = ', myPagination.firstId);
+      // If it's the first page
+      if (parseInt(myPagination.start) === 1) {
+        myPagination.lastId = 0;
+        myPagination.currId = 1;
+        myPagination.nextId = parseInt(myPagination.numItems) + 1;
+      // If it's another page instead
+      } else {
+        // If we are going to the next page
+        if (myStep == 'right') {
+          myPagination.lastId = curr;
+          myPagination.currId = next;
+          myPagination.nextId = parseInt(myPagination.numItems) + parseInt(next);
+        // If we are returning to a previous page
+        } else if (myStep == 'left') {
+          myPagination.lastId = last;
+          myPagination.currId = curr;
+          myPagination.nextId = next;
+        }
+      }
+
+    }
 
     return myPagination
 
@@ -173,9 +162,7 @@ module.exports = {
   filterProducts: function(filterString, list) {
     let regex = new RegExp(filterString,"i");
     let result = [];
-    let count = 0;
     list.map((item)=>{
-      count++;
       if (item.name.includes(filterString) || regex.test(item.name) ) {
         result.push(item)
       }
@@ -221,55 +208,93 @@ module.exports = {
     // myNumItems receive 25 if numItems is false
     let myNumItems = numItems ? numItems : 25;
 
+    // If we are calling this function passing a queryString
+    // we need to use the SEARCH API for that and we deal with
+    // it in a different way of when we use PAGINATION API
+    if (queryString) {
 
-    // Pagination control-flow
-    //console.log('O COMECO DE TUDO E AQUI ===> ', lastId, currId, nextId, myStep);
-    if (myStep) {
-      // console.log('Hora de tomar alguma decisao com esses valores...');
-      // console.log('first = ', firstId);
-      // console.log('last = ', lastId);
-      // console.log('curr = ', currId);
-      // console.log('next = ', nextId);
-      // console.log('myStep = ', myStep);
-
-      if (myStep == 'right') {
-        myNext = nextId;
-        myCurr = nextId;
-        myLast = currId;
-        myPosition = '&maxId=' + myNext;
+      if (myStep) {
+        if (myStep == 'right') {
+          myLast = lastId;
+          myCurr = currId;
+          myNext = nextId;
+          myPosition = '&start=' + myNext;
+        } else if (myStep == 'left') {
+          myNext = currId;
+          myCurr = lastId;
+          myLast = parseInt(lastId) - parseInt(myNumItems);
+          if (myLast < 0) {
+            myLast = 1;
+          }
+          myPosition = '&start=' + myLast;
+        }
       } else {
-        // console.log('=== RECEBEMOS ISSO COMO PARAMETRO ===');
+        myLast = 0;
+        myCurr = 1;
+        myNext = parseInt(myNumItems) + 1;
+      }
+
+    // se vier da Pagination API
+    } else {
+
+      // Pagination control-flow
+      //console.log('O COMECO DE TUDO E AQUI ===> ', lastId, currId, nextId, myStep);
+      if (myStep) {
+        // console.log('Hora de tomar alguma decisao com esses valores...');
         // console.log('first = ', firstId);
         // console.log('last = ', lastId);
         // console.log('curr = ', currId);
         // console.log('next = ', nextId);
         // console.log('myStep = ', myStep);
-        myNext = currId;
-        myCurr = lastId;
-        myLast = lastId;
-        myPosition = '&maxId=' + lastId;
-        // console.log('=== DEPOIS DE SALVARMOS FICOU ASSIM ===');
+
+        if (myStep == 'right') {
+          myNext = nextId;
+          myCurr = nextId;
+          myLast = currId;
+          myPosition = '&maxId=' + myNext;
+        } else {
+          // console.log('=== RECEBEMOS ISSO COMO PARAMETRO ===');
+          // console.log('first = ', firstId);
+          // console.log('last = ', lastId);
+          // console.log('curr = ', currId);
+          // console.log('next = ', nextId);
+          // console.log('myStep = ', myStep);
+          myNext = currId;
+          myCurr = lastId;
+          myLast = lastId;
+          myPosition = '&maxId=' + lastId;
+          // console.log('=== DEPOIS DE SALVARMOS FICOU ASSIM ===');
+          // console.log('first = ', firstId);
+          // console.log('last = ', myLast);
+          // console.log('curr = ', myCurr);
+          // console.log('next = ', myNext);
+          // console.log('myPosition = ', myPosition);
+        }
+
+        // console.log('=== vamos enviar isso para a paginacao ===');
         // console.log('first = ', firstId);
         // console.log('last = ', myLast);
         // console.log('curr = ', myCurr);
         // console.log('next = ', myNext);
-        // console.log('myPosition = ', myPosition);
+        // console.log('myStep = ', myStep);
+
       }
 
-      // console.log('=== vamos enviar isso para a paginacao ===');
-      // console.log('first = ', firstId);
-      // console.log('last = ', myLast);
-      // console.log('curr = ', myCurr);
-      // console.log('next = ', myNext);
-      // console.log('myStep = ', myStep);
-
     }
+
+    console.log('=== DEPOIS DE SALVARMOS FICOU ASSIM ===');
+    console.log('first = ', firstId);
+    console.log('last = ', myLast);
+    console.log('curr = ', myCurr);
+    console.log('next = ', myNext);
+    console.log('myStep = ', myStep);
+    console.log('myPosition = ', myPosition);
 
     // Pagination API == queryString optional, up to 1.000 products per time, search only products result
     // Search API ====== queryString required, up to 25 products per time, search all products everytime
     if (queryString) {
       myUrl = process.env.WALMART_SEARCH + 'apiKey=' + process.env.WALMART_KEY;
-      myUrl += '&categoryId=' + categoryID + '&numItems=' + myNumItems + '&query=' + queryString;
+      myUrl += '&categoryId=' + categoryID + '&numItems=' + myNumItems + '&query=' + queryString + myPosition;
     } else {
       myUrl = process.env.WALMART_PAGINATED + 'apiKey=' + process.env.WALMART_KEY;
       myUrl += '&category=' + categoryID + '&count=' + myNumItems + myPosition;
@@ -294,12 +319,9 @@ module.exports = {
         }
       })
       .then(body=>{
-        console.log('aqui chegou sim...')
         let pagination = module.exports.preparePagination(body, myNumItems, categoryName, categoryID, myLast, myCurr, myNext, myStep, firstId);
-        console.log('aqui nao deve chegar ainda...')
         let myProducts = body.items;
         let total = pagination.records;
-        console.log('chegou aqui?')
         return cb(null,myProducts, pagination, categoryList, total);
         
         // if (queryString) {
@@ -319,36 +341,6 @@ module.exports = {
       .catch(err=> {
         cb('Error requesting API');
       });
-
-      // // And after that we get our products
-      // // let myUrl = process.env.WALMART_PAGINATED + 'apiKey=' + process.env.WALMART_KEY;
-      // // myUrl += '&category=' + category + '&count=100'
-      // request.get({ url: myUrl }, function(err, resp, body) {
-      //   if (!err && resp.statusCode == 200) {
-      //     let myData = JSON.parse(body);
-      //     let objProducts = myData.items;
-      //     console.log(objProducts.length)
-      //     let pagination = module.exports.preparePagination(myData, numItems, nameCurrentCategory, category, myUrl)
-  
-      //     // If there's a product name to filter, we do it
-      //     // if don't, we use the objProducts itself
-      //     let myProducts = [];
-      //     if (name) {
-      //       myProducts = module.exports.filterProducts(name, objProducts)
-      //     } else {
-      //       myProducts = objProducts
-      //     }
-
-      //     if (myProducts) {
-      //       //return cb(null,myProducts, pagination, categoryList, nameCurrentCategory, name)
-      //       return cb(null,myProducts, pagination, categoryList)
-      //     } else {
-      //       cb('No products for this category OR category not found')
-      //     }
-      //   } else {
-      //     cb('Error requesting API')
-      //   }
-      // });
 
     });
 
