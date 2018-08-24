@@ -18,3 +18,5 @@ This project utilizes HTML, CSS, JS, and EJS on the front-end; as well as, Node,
 - Install all dependencies (using the `npm install` command).
 
 - Run the web server using the `npm run server` command.
+
+- Go to your browser and type `http://localhost:7000` to use the WebApp.
