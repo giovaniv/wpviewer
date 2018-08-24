@@ -36,8 +36,8 @@
 
     <form class="form-inline justify-content-center" method="post" action="/products">
       <div class="form-group mb-3 pr-2">
-        <select class="form-control mr-3" id="categorySelect" name="categorySelect">
-          <option value="0"></option>
+        <select class="form-control mr-3" id="categorySelect" name="categorySelect" required>
+          <option value=""></option>
           <% for ( var i = 0; i < categoryList.length; i++ ) {
             var selected = '';
             if (categoryList[i].name === pagination.categoryName) {

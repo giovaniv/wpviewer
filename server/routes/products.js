@@ -67,13 +67,17 @@ module.exports = function(DataHelpers) {
   // POST because we don't want to show the queryString in the address bar as a security reason
   productsRoutes.post("/", function(req, res) {
 
-    console.log('category select = ', req.body.categorySelect);
-
     // Category ID filter
     if (req.body.categorySelect != 0) {
       myCategoryID = req.body.categorySelect;
     } else {
-      console.log('entrou aqui')
+      DataHelpers.mountProductFirstPage((err,categoryList) => {
+        if (err) {
+          res.status(201).render('error',{ err });
+        } else {
+          res.status(201).render('products_home',{ categoryList, msg: 'Please select any category' });
+        }
+      });
       return;
     }
 
