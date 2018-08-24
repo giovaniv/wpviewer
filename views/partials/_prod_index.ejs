@@ -92,7 +92,8 @@
                 <p class="card-text">
                   <%=products[i].name.substring(0,15)%>...<br>
                   <span class="badge badge-pill badge-success"><%=products[i].stock%></span><br>
-                  <span class="badge badge-pill badge-info">C$ <%=products[i].salePrice%></span><br>
+                  <% var price = ((products[i] || {}).bestMarketplacePrice || {}).price; %>
+                  <span class="badge badge-pill badge-info">C$ <%=price%></span><br>
                 </p>
               </div>
             </div>

@@ -10,7 +10,35 @@
         </button>
       </div>
       <div class="modal-body">
-        <%=myProduct.shortDescription%>
+        <div class="row">
+          <div class="col-5">
+            <img src="<%=myProduct.mediumImage%>" class="img-fluid" alt="<%=myProduct.name%>">
+          </div>
+          <div class="col-7">
+            <p class="small"><%=myProduct.shortDescription%></p>
+            <table class="table table-borderless table-sm">
+            <tbody class="small">
+              <tr><td>Status:</td><td><%=myProduct.stock%></td></tr>
+
+              <% var bestPrice = ((myProduct || {}).bestMarketplacePrice || {}).price; %>
+              <tr><td>Best Price:</td><td>C$ <%=bestPrice%></td></tr>
+
+              <tr><td>By:</td><td><%=myProduct.brandName%></td></tr>
+              <tr><td>Status:</td><td><%=myProduct.stock%></td></tr>
+
+              <% if (myProduct.customerRatingImage && myProduct.numReviews && myProduct.customerRating) { %>
+                <tr><td>Rating:</td><td>
+                <img src="<%=myProduct.customerRatingImage%>" alt="<%=myProduct.customerRating%>">
+                </td></tr>
+                <tr><td>Reviews:</td><td><%=myProduct.numReviews%></td></tr>
+              <% } %>
+
+              </tr>
+            </tbody>
+            </table>
+            <a href="<%=myProduct.productUrl%>" class="btn btn-primary btn-md" target="_blank">Check in Walmart</a>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
